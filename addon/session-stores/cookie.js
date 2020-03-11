@@ -76,6 +76,8 @@ export default BaseStore.extend({
   */
   cookieExpirationTime: null,
 
+  sameSite: 'none',
+
   _secureCookies: window.location.protocol === 'https:',
 
   _syncDataTimeout: null,
@@ -158,7 +160,8 @@ export default BaseStore.extend({
     let domain      = Ember.isEmpty(this.cookieDomain) ? '' : `; domain=${this.cookieDomain}`;
     let expires     = Ember.isEmpty(expiration) ? '' : `; expires=${new Date(expiration).toUTCString()}`;
     let secure      = !!this._secureCookies ? ';secure' : '';
-    document.cookie = `${this.cookieName}=${encodeURIComponent(value)}${domain}${path}${expires}${secure}`;
+    let sameSite  = `;samesite=${this.sameSite}`;
+    document.cookie = `${this.cookieName}=${encodeURIComponent(value)}${domain}${path}${expires}${sameSite}${secure}`;
     if (expiration !== null) {
       let cachedExpirationTime = this._read(`${this.cookieName}:expiration_time`);
       document.cookie = `${this.cookieName}:expiration_time=${encodeURIComponent(this.cookieExpirationTime || cachedExpirationTime)}${domain}${path}${expires}${secure}`;
